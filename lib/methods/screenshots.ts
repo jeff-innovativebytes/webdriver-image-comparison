@@ -107,7 +107,7 @@ export async function getFullPageScreenshotsDataNativeMobile(
     toolBarShadowPadding,
   } = options;
   const iosViewportHeight = innerHeight - addressBarShadowPadding - toolBarShadowPadding;
-  const htmClientHeight = clientHeight - addressBarShadowPadding - toolBarShadowPadding;
+  const htmlClientHeight = clientHeight - addressBarShadowPadding - toolBarShadowPadding;
   // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
   const amountOfScrollsArray = [];
   let scrollHeight: number;
@@ -116,7 +116,7 @@ export async function getFullPageScreenshotsDataNativeMobile(
   for (let i = 0; i <= amountOfScrollsArray.length; i++) {
     // Determine and start scrolling
     const scrollY = iosViewportHeight * i;
-    const scrollClientHeight = htmClientHeight * i;
+    const scrollClientHeight = htmlClientHeight * i;
     await executor(scrollToPosition, scrollY);
 
     // Hide scrollbars before taking a screenshot, we don't want them, on the screenshot
@@ -146,7 +146,7 @@ export async function getFullPageScreenshotsDataNativeMobile(
     // There is no else
 
     // The height of the image of the last 1 could be different
-    const imageHeight = amountOfScrollsArray.length === i ? scrollHeight - scrollY : iosViewportHeight;
+    const imageHeight = amountOfScrollsArray.length === i ? (scrollHeight * htmlClientHeight / iosViewportHeight ) - scrollClientHeight : htmlClientHeight;
 
     // The starting position for cropping could be different for the last image
     // The cropping always needs to start at status and address bar height and the address bar shadow padding
@@ -179,7 +179,7 @@ export async function getFullPageScreenshotsDataNativeMobile(
 
   return {
     ...calculateDprData({
-      fullPageHeight: (scrollHeight * htmClientHeight / iosViewportHeight )- addressBarShadowPadding - toolBarShadowPadding,
+      fullPageHeight: (scrollHeight * htmlClientHeight / iosViewportHeight )- addressBarShadowPadding - toolBarShadowPadding,
       fullPageWidth: screenshotSizeWidth,
     }, devicePixelRatio),
     data: viewportScreenshots,
